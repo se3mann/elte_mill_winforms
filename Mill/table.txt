@@ -1,0 +1,19 @@
+x	0	0	x	0	0	x
+0	x	0	x	0	x	0
+0	0	x	x	x	0	0
+x	x	x	0	x	x	x
+0	0	x	x	x	0	0
+0	x	0	x	0	x	0
+x	0	0	x	0	0	x
+
+0			1			2
+	3		4		5
+		6	7	8
+9	10	11		12	13	14
+		15	16	17
+	18		19		20
+21			22			23
+
+layout size:
+window width -18
+7x7 tableLayout with 100x100 cell size: windows size: 718x?

@@ -11,11 +11,12 @@ namespace Mill.Persistence
     {
         #region Fields
 
-        private Int32 _lastPlayer; //for saving and loading
-        private Int32 _player1UnusedToken;
-        private Int32 _player2UnusedToken;
-        private Int32 _player1TokenInTable;
-        private Int32 _player2TokenInTable;
+        private int _lastPlayer; //for saving and loading
+        private int _currentAction; //for saving and loading
+        private int _player1UnusedToken;
+        private int _player2UnusedToken;
+        private int _player1TokenInTable;
+        private int _player2TokenInTable;
         private Field[] _fields;
 
         private readonly int[][] _mills;
@@ -25,11 +26,12 @@ namespace Mill.Persistence
         #endregion
 
         #region Properties
-        public Int32 Player1TokenInTable { get { return _player1TokenInTable; } set { _player1TokenInTable = value; } }
-        public Int32 Player2TokenInTable { get { return _player2TokenInTable; } set { _player2TokenInTable = value; } }
-        public Int32 Player1UnusedToken { get { return _player1UnusedToken; } set { _player1UnusedToken = value; } }
-        public Int32 Player2UnusedToken { get { return _player2UnusedToken; } set { _player2UnusedToken = value; } }
+        public int Player1TokenInTable { get { return _player1TokenInTable; } set { _player1TokenInTable = value; } }
+        public int Player2TokenInTable { get { return _player2TokenInTable; } set { _player2TokenInTable = value; } }
+        public int Player1UnusedToken { get { return _player1UnusedToken; } set { _player1UnusedToken = value; } }
+        public int Player2UnusedToken { get { return _player2UnusedToken; } set { _player2UnusedToken = value; } }
         public int LastPlayer { get { return _lastPlayer; } set { _lastPlayer = value; } }
+        public int CurrentAction { get { return _currentAction; } set { _currentAction = value; } }
         public Field[] Fields { get { return _fields; } }
         #endregion
 
@@ -37,6 +39,7 @@ namespace Mill.Persistence
         public MillTable()
         {
             _lastPlayer = 2; //the Player1 starts the game
+            _currentAction = 0; //only used when save or load
             _player1UnusedToken = MAX_TOKEN;
             _player2UnusedToken = MAX_TOKEN;
             _player1TokenInTable = 0;
@@ -71,6 +74,7 @@ namespace Mill.Persistence
             }
             return mill;   
         }
+
         #endregion
 
         #region Private methods

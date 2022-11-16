@@ -62,15 +62,17 @@
             this.circularButton23 = new Mill.View.CircularButton();
             this.circularButton24 = new Mill.View.CircularButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this._talonNumberPlayer1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this._talonNumberPlayer2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
             this._currentPlayerLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this._currentPlayerText = new System.Windows.Forms.ToolStripStatusLabel();
             this._nextStepLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this._nextStepLabelText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this._talonNumberPlayer1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this._talonNumberPlayer2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this._saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this._openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this._menuStrip.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -118,12 +120,14 @@
             this._saveGameMenuItem.Name = "_saveGameMenuItem";
             this._saveGameMenuItem.Size = new System.Drawing.Size(191, 26);
             this._saveGameMenuItem.Text = "Játék mentése";
+            this._saveGameMenuItem.Click += new System.EventHandler(this.SaveGameMenuItem_Click);
             // 
             // _loadGameMenuItem
             // 
             this._loadGameMenuItem.Name = "_loadGameMenuItem";
             this._loadGameMenuItem.Size = new System.Drawing.Size(191, 26);
             this._loadGameMenuItem.Text = "Játék betöltése";
+            this._loadGameMenuItem.Click += new System.EventHandler(this.LoadGameMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -135,6 +139,7 @@
             this._closeGameMenuItem.Name = "_closeGameMenuItem";
             this._closeGameMenuItem.Size = new System.Drawing.Size(191, 26);
             this._closeGameMenuItem.Text = "Kilépés";
+            this._closeGameMenuItem.Click += new System.EventHandler(this.MenuFileExit_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -441,6 +446,30 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(114, 24);
+            this.toolStripStatusLabel1.Text = "Játékos 1 talon: ";
+            // 
+            // _talonNumberPlayer1
+            // 
+            this._talonNumberPlayer1.Name = "_talonNumberPlayer1";
+            this._talonNumberPlayer1.Size = new System.Drawing.Size(17, 24);
+            this._talonNumberPlayer1.Text = "9";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(114, 24);
+            this.toolStripStatusLabel3.Text = "Játékos 2 talon: ";
+            // 
+            // _talonNumberPlayer2
+            // 
+            this._talonNumberPlayer2.Name = "_talonNumberPlayer2";
+            this._talonNumberPlayer2.Size = new System.Drawing.Size(17, 24);
+            this._talonNumberPlayer2.Text = "9";
+            // 
             // statusStrip2
             // 
             this.statusStrip2.AutoSize = false;
@@ -480,29 +509,15 @@
             this._nextStepLabelText.Size = new System.Drawing.Size(121, 24);
             this._nextStepLabelText.Text = "A játékos lépése!";
             // 
-            // toolStripStatusLabel1
+            // _saveFileDialog
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(114, 24);
-            this.toolStripStatusLabel1.Text = "Játékos 1 talon: ";
+            this._saveFileDialog.Filter = "Malom tábla (*.mtl)|*.mtl";
+            this._saveFileDialog.Title = "Malom játék mentése";
             // 
-            // _talonNumberPlayer1
+            // _openFileDialog
             // 
-            this._talonNumberPlayer1.Name = "_talonNumberPlayer1";
-            this._talonNumberPlayer1.Size = new System.Drawing.Size(17, 24);
-            this._talonNumberPlayer1.Text = "9";
-            // 
-            // toolStripStatusLabel3
-            // 
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(114, 24);
-            this.toolStripStatusLabel3.Text = "Játékos 2 talon: ";
-            // 
-            // _talonNumberPlayer2
-            // 
-            this._talonNumberPlayer2.Name = "_talonNumberPlayer2";
-            this._talonNumberPlayer2.Size = new System.Drawing.Size(17, 24);
-            this._talonNumberPlayer2.Text = "9";
+            this._openFileDialog.Filter = "Malom tábla (*.mtl)|*.mtl";
+            this._openFileDialog.Title = "Malom játék betöltése";
             // 
             // GameForm
             // 
@@ -574,5 +589,7 @@
         private ToolStripStatusLabel _talonNumberPlayer1;
         private ToolStripStatusLabel toolStripStatusLabel3;
         private ToolStripStatusLabel _talonNumberPlayer2;
+        private SaveFileDialog _saveFileDialog;
+        private OpenFileDialog _openFileDialog;
     }
 }

@@ -1,24 +1,34 @@
 using Mill.Model;
+using Mill.Persistence;
 using System.Diagnostics;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace Mill
 {
     public partial class GameForm : Form
     {
         #region Fields
+        private IMillDataAccess _dataAccess;
         private MillGameModel _model;
         #endregion
+
+        #region Constructors 
         public GameForm()
         {
             InitializeComponent();
         }
+        #endregion
 
         #region Form event handlers
         private void GameForm_Load(Object sender, EventArgs e)
         {
-            _model = new MillGameModel();
+            _dataAccess = new MillFileDataAccess();
+            
+            _model = new MillGameModel(_dataAccess);
             _model.GameAdvanced += new EventHandler<MillEventArgs>(Game_GameAdvanced);
             _model.GameOver += new EventHandler<MillEventArgs>(Game_GameOver);
+            _model.PlayerHasToPass += new EventHandler<PassingEventArgs>(Game_PlayerHasToPass);
 
             SetupTable();
         }
@@ -71,6 +81,7 @@ namespace Mill
             e.Graphics.DrawLine(blackPen, line3x1, line3y1, line3x2, line3y2);
             e.Graphics.DrawLine(blackPen, line4x1, line4y1, line4x2, line4y2);
         }
+        
         #endregion
 
         #region Menu event handlers
@@ -80,14 +91,51 @@ namespace Mill
             _model.NewGame();
             SetupTable();
         }
+
+        private async void SaveGameMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // save game
+                    await _model.SaveGameAsync(_saveFileDialog.FileName);
+                }
+                catch (MillDataException)
+                {
+                    MessageBox.Show("Játék mentése sikertelen!" + Environment.NewLine + "Hibás az elérési út, vagy a könyvtár nem írható.", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void LoadGameMenuItem_Click(Object sender, EventArgs e)
+        {
+            if (_openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // játék betöltése
+                    await _model.LoadGameAsync(_openFileDialog.FileName);
+                    _saveGameMenuItem.Enabled = true;
+                }
+                catch (MillDataException ex)
+                {
+                    MessageBox.Show("Játék betöltése sikertelen!" + Environment.NewLine + "Hibás az elérési út, vagy a fájlformátum." + Environment.NewLine + ex.Path, "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    _model.NewGame();
+                    _saveGameMenuItem.Enabled = true;
+                }
+                SetupTable();
+            }
+        }
         #endregion
 
         #region Game event handlers
         private void Game_GameAdvanced(Object sender, MillEventArgs e)
         {
             string currentPlayer;
-            if (e.CurrentPlayer == Player.Player1) currentPlayer = "Játékos 1";
-            else currentPlayer = "Játékos 2";
+            if (e.CurrentPlayer == Player.Player1) currentPlayer = "Elsõ játékos";
+            else currentPlayer = "Második játékos";
             _currentPlayerText.Text = currentPlayer;
             _talonNumberPlayer1.Text = e.Player1Talon.ToString();
             _talonNumberPlayer2.Text = e.Player2Talon.ToString();
@@ -109,23 +157,45 @@ namespace Mill
             }
 
             String strPlayer;
-            if (e.CurrentPlayer == Player.Player1) strPlayer = "Játékos 1";
-            else strPlayer = "Játékos 2";
+            if (e.CurrentPlayer == Player.Player1) strPlayer = "Elsõ játékos";
+            else strPlayer = "Második játékos";
 
             MessageBox.Show("Gratulálok, gyõztél " + strPlayer + "!" + Environment.NewLine,
                                 "Malom játék",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Asterisk);
         }
+
+        private void Game_PlayerHasToPass(Object sender, PassingEventArgs e)
+        {
+            String strPlayer;
+            String action;
+            if (e.CurrentPlayer == Player.Player1) strPlayer = "Elsõ játékos";
+            else strPlayer = "Második játékos";
+            if (e.MoveToken == true) action = "mozogni";
+            else action = "ellenséges bábut levenni";
+            MessageBox.Show(strPlayer + " passzolnod kell, nem tusz " + action + "!" + Environment.NewLine,
+                                "Passzolj!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Asterisk);
+        }
+
+        private void MenuFileExit_Click(Object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Biztosan ki szeretne lépni?", "Malom játék", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Close();
+            }
+        }
         #endregion
 
         #region Field event handlers
-        
+
         private void FieldButtonClick(object sender, EventArgs e)
         {
             Button button = sender as Button;
             int field = button.TabIndex;
-            _model.step(field);
+            _model.Step(field);
 
             //refresh field in view
             if (_model.Table.Fields[field].Player == 0)
@@ -147,34 +217,45 @@ namespace Mill
                 int last = _model.LastField;
                 foreach (Button lastButton in tableLayoutPanel1.Controls)
                 {
-                    if (button.TabIndex == last) button.BackColor = Color.White;
+                    if (lastButton.TabIndex == last) lastButton.BackColor = Color.White;
                 }
             }
         }
         #endregion
         
-
         #region Private methods
         private void SetupTable()
         {
-            foreach (Button button in tableLayoutPanel1.Controls)
+            for (int i = 0; i < _model.Table.Fields.Length; i++)
             {
-                button.BackColor= Color.White;
+                foreach (Button button in tableLayoutPanel1.Controls)
+                {
+                    if (button.TabIndex == i)
+                    {
+                        if (_model.Table.GetField(i).Player == 0) button.BackColor = Color.White;
+                        if (_model.Table.GetField(i).Player == 1) button.BackColor = Color.Blue;
+                        if (_model.Table.GetField(i).Player == 2) button.BackColor = Color.Red;
+                    }
+                }
             }
+            
             string currentPlayer;
             int player1Talon = _model.Table.Player1UnusedToken;
             int player2Talon = _model.Table.Player2UnusedToken;
-            if (_model.CurrentPlayer == Player.Player1) currentPlayer = "Játékos 1";
-            else currentPlayer = "Játékos 2";
+            if (_model.CurrentPlayer == Player.Player1) currentPlayer = "Elsõ játékos";
+            else currentPlayer = "Második játékos";
             _currentPlayerText.Text = currentPlayer;
             _talonNumberPlayer1.Text = player1Talon.ToString();
             _talonNumberPlayer2.Text = player2Talon.ToString();
+
+            string nextStep = "";
+            if (_model.CurrentAction == Mill.Model.Action.Adding) nextStep = "Tegyél fel egy korongot!";
+            if (_model.CurrentAction == Mill.Model.Action.Removing) nextStep = "Vegyél le az ellenféltõl egy korongot!";
+            if (_model.CurrentAction == Mill.Model.Action.MoveDest) nextStep = "Jelöld ki mivel akarsz mozogni!";
+            if (_model.CurrentAction == Mill.Model.Action.MoveTarget) nextStep = "Jelöld ki hova akarsz mozogni!";
+            _nextStepLabelText.Text = nextStep;
         }
         #endregion
-
-        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
+    
     }
 }

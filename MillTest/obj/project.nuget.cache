@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "APK94SW53PsDCunmWJ1UvPxWryWSzL+flvcN1aseHRWNG/zR0bvqNpDYPXHNUaBuLFL8CF3rQrrw97vQzRYpHQ==",
+  "dgSpecHash": "0P9UrF7aqDeHgzVn4gAZjqv2PVMZT+Y2BvV3cxx3lrRB9E3jdUjw/mQvvFPAVB1SsvXfKK4Hv9QupwHoaZBA5Q==",
   "success": true,
-  "projectFilePath": "D:\\suli\\elte\\2022_2023_1\\eva\\gy\\bead\\mill_winforms\\MillTest\\MillTest.csproj",
+  "projectFilePath": "C:\\Users\\mark\\Documents\\suli\\eva_beadando\\mill_winforms\\MillTest\\MillTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mark\\.nuget\\packages\\castle.core\\5.1.0\\castle.core.5.1.0.nupkg.sha512",
     "C:\\Users\\mark\\.nuget\\packages\\coverlet.collector\\3.1.2\\coverlet.collector.3.1.2.nupkg.sha512",
